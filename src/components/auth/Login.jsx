@@ -2,7 +2,8 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { Wrench, AlertCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+// 1. Thêm 'Link' vào import
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -21,6 +22,7 @@ const Login = () => {
     setError("");
 
     try {
+      // 2. AuthContext đã được cập nhật để gọi API thật
       await login(formData.username, formData.password);
       navigate("/service-types");
     } catch (err) {
@@ -34,7 +36,7 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-orange-500 via-orange-600 to-orange-700 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-orange-100">
-          {/* --- LOGO + TITLE --- */}
+          {/* ... (Phần Logo và Tiêu đề giữ nguyên) ... */}
           <div className="flex items-center justify-center mb-8">
             <div className="p-3 bg-orange-100 rounded-full">
               <Wrench className="w-7 h-7 text-orange-600" />
@@ -43,13 +45,13 @@ const Login = () => {
               Garage Management
             </h1>
           </div>
-
           <h2 className="text-lg font-semibold text-gray-700 mb-6 text-center">
             Đăng nhập hệ thống quản lý gara
           </h2>
 
-          {/* --- FORM --- */}
+          {/* --- FORM (Giữ nguyên) --- */}
           <form onSubmit={handleSubmit} className="space-y-5">
+            {/* ... (Các input Tên đăng nhập và Mật khẩu giữ nguyên) ... */}
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Tên đăng nhập
@@ -80,7 +82,7 @@ const Login = () => {
               />
             </div>
 
-            {/* --- THÔNG BÁO LỖI --- */}
+            {/* --- THÔNG BÁO LỖI (Giữ nguyên) --- */}
             {error && (
               <div className="p-3 bg-red-100 text-red-600 rounded-lg text-sm flex items-center gap-2">
                 <AlertCircle size={16} />
@@ -88,7 +90,7 @@ const Login = () => {
               </div>
             )}
 
-            {/* --- NÚT ĐĂNG NHẬP --- */}
+            {/* --- NÚT ĐĂNG NHẬP (Giữ nguyên) --- */}
             <button
               type="submit"
               disabled={loading}
@@ -98,7 +100,19 @@ const Login = () => {
             </button>
           </form>
 
-          {/* --- FOOTER --- */}
+          {/* === 3. THÊM PHẦN NÀY VÀO === */}
+          <div className="text-center mt-4">
+            <span className="text-sm text-gray-600">Chưa có tài khoản? </span>
+            <Link
+              to="/register"
+              className="text-sm font-medium text-orange-600 hover:text-orange-700"
+            >
+              Đăng ký ngay
+            </Link>
+          </div>
+          {/* === KẾT THÚC PHẦN THÊM === */}
+
+          {/* --- FOOTER (Giữ nguyên) --- */}
           <p className="text-xs text-gray-500 mt-6 text-center">
             © 2025 Garage Management System — Powered by React & Spring Boot
           </p>
