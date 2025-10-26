@@ -1,49 +1,93 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { apiCall } from "../services/api"; // Đảm bảo đường dẫn này đúng
 
-// 🔹 Tạo Context để quản lý thông tin người dùng
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Lưu thông tin người dùng
-  const [loading, setLoading] = useState(true); // Loading ban đầu (đang kiểm tra localStorage)
+  const [user, setUser] = useState(null);
+  // 'loading' này CHỈ DÙNG cho lần tải trang đầu tiên
+  const [loading, setLoading] = useState(true);
 
-  // 🧩 Kiểm tra thông tin đăng nhập khi load app
   useEffect(() => {
+    const token = localStorage.getItem("authToken");
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
+
+    if (token && savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    setLoading(false);
+    setLoading(false); // Hoàn tất kiểm tra ban đầu
   }, []);
 
-  // ✅ Hàm đăng nhập (mock tạm)
-  const login = (username) => {
-    const newUser = {
-      username,
-      role: username === "admin" ? "admin" : "user",
-    };
-    setUser(newUser);
-    localStorage.setItem("user", JSON.stringify(newUser));
+  // ✅ HÀM LOGIN (Đã BỎ setLoading)
+  const login = async (username, password) => {
+    try {
+      const apiResponse = await apiCall("/api/auth/dangNhap", {
+        method: "POST",
+        data: { tenDangNhap: username, matKhau: password },
+      });
+
+      if (apiResponse && apiResponse.data && apiResponse.data.token) {
+        const authData = apiResponse.data;
+        const userData = { ...authData };
+        delete userData.token;
+
+        setUser(userData); // ✅ Chỉ cần gọi setUser là đủ
+        localStorage.setItem("authToken", authData.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+      } else {
+        throw new Error(
+          apiResponse.message || "Phản hồi đăng nhập không hợp lệ."
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
-  // ✅ Hàm đăng xuất
+  // ✅ HÀM REGISTER (Đã BỎ setLoading)
+  const register = async (registerData) => {
+    try {
+      const apiResponse = await apiCall("/api/auth/dangKy", {
+        method: "POST",
+        data: registerData,
+      });
+
+      if (apiResponse && apiResponse.data && apiResponse.data.token) {
+        const authData = apiResponse.data;
+        const userData = { ...authData };
+        delete userData.token;
+
+        setUser(userData); // ✅ Chỉ cần gọi setUser là đủ
+        localStorage.setItem("authToken", authData.token);
+        localStorage.setItem("user", JSON.stringify(userData));
+      } else {
+        throw new Error(
+          apiResponse.message || "Phản hồi đăng ký không hợp lệ."
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // ... (logout and isAdmin giữ nguyên) ...
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
   };
 
-  // ✅ Kiểm tra quyền admin
-  const isAdmin = () => user?.role === "admin";
+  const isAdmin = () => user?.vaiTro === "ADMIN";
 
-  // 🧠 Trả về context
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading,
+        loading, // ProtectedRoute sẽ dùng state này
         login,
         logout,
+        register,
         isAdmin,
         isAuthenticated: !!user,
       }}
@@ -53,5 +97,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ✅ Custom hook dùng ở mọi component
 export const useAuth = () => useContext(AuthContext);
