@@ -57,53 +57,47 @@ const SalesManagement = () => {
     fetchCategories();
   }, []);
 
-  // Lấy danh sách Dịch vụ
+// ⚙️ HÀM LẤY DỮ LIỆU DỊCH VỤ (đặt ngoài useEffect)
+const fetchData = async () => {
+  try {
+    setLoading(true);
+
+    const response = await serviceService.getAll(0, 1000);
+    const list = response?.content || [];
+
+    const mapped = list.map((item) => ({
+      id: item.maDichVu,
+      name: item.tenDichVu,
+      category: item.tenLoaiDichVu,
+      price: item.gia,
+      soLuongTon: item.soLuongTon,
+      soLuongBan: item.soLuongBan,
+      moTa: item.moTa,
+      image: item.anhDichVuUrl,
+      status: item.trangThai,
+      time: item.thoiGianUocTinh,
+    }));
+
+    setServices(mapped);
+    setError("");
+    fetchOverview(); // đồng bộ dashboard
+  } catch (err) {
+    showToast(err.message || "Lỗi khi tải dịch vụ", "error");
+    setError("Không thể tải danh sách dịch vụ từ server.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+// 🪄 Gọi fetchData khi load trang lần đầu
 useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-
-      const response = await serviceService.getAll(0, 1000);
-      const list = response?.content || [];
-
-      const mapped = list.map((item) => ({
-        id: item.maDichVu,
-        name: item.tenDichVu,
-        category: item.tenLoaiDichVu,
-        price: item.gia,
-        soLuongTon: item.soLuongTon,
-        soLuongBan: item.soLuongBan,
-        moTa: item.moTa,
-        image: item.anhDichVuUrl,
-        status: item.trangThai,
-        time: item.thoiGianUocTinh,
-      }));
-
-      setServices(mapped);
-      setError("");
-
-      // ✅ Tự động đồng bộ dữ liệu tổng quan (Dashboard)
-      fetchOverview();
-
-    } catch (err) {
-      showToast(err.message || "Lỗi khi tải dịch vụ", "error");
-      setError("Không thể tải danh sách dịch vụ từ server.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   fetchData();
 
-  // ✅ Khi có sự kiện reload-overview từ Sidebar → gọi lại fetchOverview
   const reloadOverViewHandler = () => fetchOverview();
   window.addEventListener("reload-overview", reloadOverViewHandler);
-
-  return () => {
-    window.removeEventListener("reload-overview", reloadOverViewHandler);
-  };
-
-}, []);// 🔥 chỉ chạy 1 lần khi load trang
+  return () => window.removeEventListener("reload-overview", reloadOverViewHandler);
+}, []);
+// 🔥 chỉ chạy 1 lần khi load trang
 
   // Xử lý kéo thả nút
   const handleMouseDown = (e) => {
@@ -287,7 +281,14 @@ useEffect(() => {
           isSidebarOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <OrderSidebar isOpen={isSidebarOpen} onToggle={toggleSidebar} />
+        <OrderSidebar isOpen={isSidebarOpen} 
+        onToggle={toggleSidebar} 
+        onOrderCreated={() => {
+    // Gọi lại dữ liệu sau khi tạo đơn thành công
+    fetchOverview();
+    // Reload lại danh sách dịch vụ
+    fetchData();
+  }}/>
       </div>
     </div>
   );

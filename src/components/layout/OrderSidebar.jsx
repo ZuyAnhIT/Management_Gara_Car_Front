@@ -19,7 +19,7 @@ import AutocompleteInput from "../common/AutocompleteInput";
 import { formatCurrency } from "../../utils/helpers";
 
 // ✅ PROPS MỚI: isOpen và onToggle để điều khiển từ bên ngoài
-function OrderSidebar({ isOpen, onToggle }) {
+function OrderSidebar({ isOpen, onToggle, onOrderCreated }) {
   const {
     cartItems,
     removeFromCart,
@@ -91,6 +91,8 @@ function OrderSidebar({ isOpen, onToggle }) {
       setRepairDescription("");
       setMechanicDisplay("");
       setVehicleDisplay("");
+      
+      if (onOrderCreated) onOrderCreated();
     } catch (err) {
       showToast(err.message || "Tạo phiếu thất bại.", "error");
     } finally {
