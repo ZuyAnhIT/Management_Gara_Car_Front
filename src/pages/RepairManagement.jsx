@@ -327,10 +327,16 @@ const overviewFields = overview
       />
 
       <RepairDetailsModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        data={selectedRepair}
-      />
+  isOpen={isDetailModalOpen}
+  onClose={() => setIsDetailModalOpen(false)}
+  data={selectedRepair}
+  onStatusChange={(maPhieu, newStatus) => {
+    // Gọi lại 2 hàm sau khi cập nhật trạng thái thành công
+    fetchData();
+    fetchOverview();
+  }}
+/>
+
 
       {isEditModalOpen && (
         <Box
