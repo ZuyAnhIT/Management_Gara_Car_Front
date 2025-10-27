@@ -19,7 +19,7 @@ import AutocompleteInput from "../common/AutocompleteInput";
 import { formatCurrency } from "../../utils/helpers";
 
 // ✅ PROPS MỚI: isOpen và onToggle để điều khiển từ bên ngoài
-function OrderSidebar({ isOpen, onToggle, onOrderCreated }) {
+function OrderSidebar({ isOpen, onToggle }) {
   const {
     cartItems,
     removeFromCart,
@@ -91,8 +91,6 @@ function OrderSidebar({ isOpen, onToggle, onOrderCreated }) {
       setRepairDescription("");
       setMechanicDisplay("");
       setVehicleDisplay("");
-      
-      if (onOrderCreated) onOrderCreated();
     } catch (err) {
       showToast(err.message || "Tạo phiếu thất bại.", "error");
     } finally {
@@ -144,7 +142,7 @@ function OrderSidebar({ isOpen, onToggle, onOrderCreated }) {
               <User size={16} className="text-blue-500" /> Thông tin Thợ
             </h6>
             <AutocompleteInput
-              placeholder="Tìm thợ theo tên hoặc SĐT..."
+              placeholder="Tìm thợ theo họ tên..."
               fetchSuggestions={machineService.search}
               searchParamKey={"tenTho"}
               secondarySearchParamKey={"soDienThoai"}
