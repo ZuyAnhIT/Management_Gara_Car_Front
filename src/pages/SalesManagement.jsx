@@ -13,6 +13,7 @@ import Loading from "../components/common/Loading";
 const SalesManagement = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  
   const { addToCart } = useCart();
   const [services, setServices] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -34,6 +35,12 @@ const SalesManagement = () => {
   const buttonRef = useRef(null);
   const dragOffset = useRef({ x: 0, y: 0 });
 
+  const fetchOverview = () => {
+  // sẽ gọi API tổng quan sau
+};
+
+
+
   // Lấy danh sách Loại dịch vụ
   useEffect(() => {
     const fetchCategories = async () => {
@@ -51,38 +58,52 @@ const SalesManagement = () => {
   }, []);
 
   // Lấy danh sách Dịch vụ
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await serviceService.getAll(0, 1000);
-        const list = response?.content || [];
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
 
-        const mapped = list.map((item) => ({
-          id: item.maDichVu,
-          name: item.tenDichVu,
-          category: item.tenLoaiDichVu,
-          price: item.gia,
-          soLuongTon: item.soLuongTon,
-          soLuongBan: item.soLuongBan,
-          moTa: item.moTa,
-          image: item.anhDichVuUrl,
-          status: item.trangThai,
-          time: item.thoiGianUocTinh,
-        }));
+      const response = await serviceService.getAll(0, 1000);
+      const list = response?.content || [];
 
-        setServices(mapped);
-        setError("");
-      } catch (err) {
-        showToast(err.message || "Lỗi khi tải loại dịch vụ", "error");
-        setError("Không thể tải danh sách dịch vụ từ server.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-    
-  }, []);
+      const mapped = list.map((item) => ({
+        id: item.maDichVu,
+        name: item.tenDichVu,
+        category: item.tenLoaiDichVu,
+        price: item.gia,
+        soLuongTon: item.soLuongTon,
+        soLuongBan: item.soLuongBan,
+        moTa: item.moTa,
+        image: item.anhDichVuUrl,
+        status: item.trangThai,
+        time: item.thoiGianUocTinh,
+      }));
+
+      setServices(mapped);
+      setError("");
+
+      // ✅ Tự động đồng bộ dữ liệu tổng quan (Dashboard)
+      fetchOverview();
+
+    } catch (err) {
+      showToast(err.message || "Lỗi khi tải dịch vụ", "error");
+      setError("Không thể tải danh sách dịch vụ từ server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+
+  // ✅ Khi có sự kiện reload-overview từ Sidebar → gọi lại fetchOverview
+  const reloadOverViewHandler = () => fetchOverview();
+  window.addEventListener("reload-overview", reloadOverViewHandler);
+
+  return () => {
+    window.removeEventListener("reload-overview", reloadOverViewHandler);
+  };
+
+}, []);// 🔥 chỉ chạy 1 lần khi load trang
 
   // Xử lý kéo thả nút
   const handleMouseDown = (e) => {

@@ -83,6 +83,8 @@ function OrderSidebar({ isOpen, onToggle }) {
     try {
       const response = await repairService.create(payload);
       showToast(response.message || "Tạo phiếu thành công!", "success");
+      window.dispatchEvent(new Event("reload-services"));
+
       clearCart();
       setSelectedMechanic(null);
       setSelectedVehicle(null);
