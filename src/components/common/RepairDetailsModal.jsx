@@ -45,10 +45,7 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
       onClose(); // đóng modal
     } catch (err) {
       console.error(err);
-      showToast(
-        "⚠️ Đã xuất phiếu nhưng cập nhật trạng thái thất bại!",
-        "error"
-      );
+      showToast(" Đã xuất phiếu nhưng cập nhật trạng thái thất bại!", "error");
     } finally {
       setLoading(false);
     }
