@@ -38,7 +38,11 @@ function OrderSidebar({ isOpen, onToggle }) {
   const [vehicleDisplay, setVehicleDisplay] = useState("");
 
   const formatMechanic = (mechanic) =>
-    mechanic ? `${mechanic.tenTho} - ${mechanic.soDienThoai}` : "";
+    mechanic
+      ? `${mechanic.tenTho} - ${mechanic.soDienThoai} - ${
+          mechanic.chuyenMon || "Chưa có"
+        }`
+      : "";
   const formatVehicle = (vehicle) =>
     vehicle ? `${vehicle.bienSo} - ${vehicle.tenKhachHang || "N/A"}` : "";
 
@@ -146,6 +150,7 @@ function OrderSidebar({ isOpen, onToggle }) {
               fetchSuggestions={machineService.search}
               searchParamKey={"tenTho"}
               secondarySearchParamKey={"soDienThoai"}
+              thirdSearchParamKey={"chuyenMon"}
               displayFormat={formatMechanic}
               onSelect={handleSelectMechanic}
               initialDisplayValue={mechanicDisplay}
