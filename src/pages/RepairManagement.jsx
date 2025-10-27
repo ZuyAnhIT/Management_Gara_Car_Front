@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback} from "react";
 import { useNavigate } from "react-router-dom";
+
+
 import { useToast } from "../context/ToastContext";
 import { repairService } from "../services/repairService";
 import Table from "../components/common/Table";
@@ -11,7 +13,7 @@ import Box from "../components/common/Box"; // Import Box component
 import BoxOnView from "../components/common/BoxOnView";
 import { statisticService } from "../services/statisticService";
 import { Plus } from "lucide-react";
-import { formatDate, formatCurrency } from "../utils/helpers";
+import { formatDateTime, formatCurrency } from "../utils/helpers";
 import Loading from "../components/common/Loading";
 
 const getStatusColor = (status) => {
@@ -167,7 +169,6 @@ const RepairManagement = () => {
       );
       setIsEditModalOpen(false);
       fetchData();
-      fetchOverview();
     } catch (err) {
       showToast(err.message, "error");
     } finally {
@@ -192,7 +193,7 @@ const RepairManagement = () => {
     { key: "bienSo", label: "Biển Số" },
     { key: "maTho", label: "Mã Thợ" },
     { key: "tenTho", label: "Thợ Phụ Trách" },
-    { key: "ngayLap", label: "Ngày Lập", render: (value) => formatDate(value) },
+    { key: "ngayLap", label: "Ngày Lập", render: (value) => formatDateTime(value) },
     {
       key: "moTa",
       label: "Mô Tả",
@@ -326,10 +327,16 @@ const overviewFields = overview
       />
 
       <RepairDetailsModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        data={selectedRepair}
-      />
+  isOpen={isDetailModalOpen}
+  onClose={() => setIsDetailModalOpen(false)}
+  data={selectedRepair}
+  onStatusChange={(maPhieu, newStatus) => {
+    // Gọi lại 2 hàm sau khi cập nhật trạng thái thành công
+    fetchData();
+    fetchOverview();
+  }}
+/>
+
 
       {isEditModalOpen && (
         <Box

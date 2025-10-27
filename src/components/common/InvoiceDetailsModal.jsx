@@ -14,49 +14,114 @@ import {
 import { formatDateTime, formatCurrency } from "../../utils/helpers";
 
 const InvoiceDetailsModal = ({ isOpen, onClose, data }) => {
-  const [loading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
   if (!isOpen || !data) return null;
 
   const exportInvoicePDF = async () => {
-    try {
-      const invoiceElement = document.getElementById("invoice-content");
+  try {
+    setLoading(true);
 
-      const canvas = await html2canvas(invoiceElement, {
-        scale: 1.5,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        removeContainer: true,
-      });
+    // ✅ Tạo nội dung in với giao diện đẹp như PrintableRepairTicket
+    const printEl = document.createElement("div");
+    printEl.style.width = "210mm";
+    printEl.style.padding = "32px";
+    printEl.style.fontFamily = "sans-serif";
+    printEl.style.backgroundColor = "white";
+    printEl.innerHTML = `
+      <div style="text-align:center; margin-bottom:24px;">
+        <h1 style="font-size:24px; font-weight:bold; margin-bottom:4px;">HÓA ĐƠN THANH TOÁN</h1>
+        <p style="color:#555;">Garage Management System</p>
+      </div>
 
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
+      <div style="font-size:14px; border-top:1px dashed #aaa; border-bottom:1px dashed #aaa; padding:12px 0; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between;">
+          <span><strong>Mã hóa đơn:</strong> #${data.maHoaDon}</span>
+          <span><strong>Mã phiếu sửa:</strong> #${data.maPhieu}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <span><strong>Ngày lập:</strong> ${formatDateTime(data.ngayLapHoaDon)}</span>
+          <span><strong>Thanh toán:</strong> ${formatDateTime(data.thoiGianThanhCong)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-top:6px;">
+          <span><strong>Hình thức:</strong> ${data.kieuThanhToan}</span>
+          <span><strong>Trạng thái:</strong> ${data.trangThai}</span>
+        </div>
+      </div>
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      <div style="font-size:15px; font-weight:bold; margin-bottom:12px;">
+        Tổng tiền: <span style="color:#0056ff;">${formatCurrency(data.tongTien)}</span>
+      </div>
 
-      let heightLeft = pdfHeight;
-      let position = 0;
+      <h3 style="font-size:16px; font-weight:bold; margin-bottom:8px;">Chi tiết dịch vụ thanh toán</h3>
+      <table style="width:100%; border-collapse:collapse; font-size:14px;">
+        <thead>
+          <tr style="border-bottom:2px solid #000;">
+            <th style="padding:6px; text-align:left;">Tên dịch vụ</th>
+            <th style="padding:6px; text-align:center; width:40px;">SL</th>
+            <th style="padding:6px; text-align:right;">Đơn giá</th>
+            <th style="padding:6px; text-align:right;">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data.chiTietList.map(
+            (item) => `
+            <tr style="border-bottom:1px dashed #aaa;">
+              <td style="padding:6px;">${item.tenDichVu}</td>
+              <td style="padding:6px; text-align:center;">${item.soLuong}</td>
+              <td style="padding:6px; text-align:right;">${formatCurrency(item.donGia)}</td>
+              <td style="padding:6px; text-align:right; font-weight:bold;">${formatCurrency(item.thanhTien)}</td>
+            </tr>
+          `
+          ).join("")}
+        </tbody>
+      </table>
+    `;
 
+    // ✅ Render ẩn để screenshot
+    document.body.appendChild(printEl);
+
+    const canvas = await html2canvas(printEl, {
+      scale: window.devicePixelRatio * 1.25,
+      useCORS: true,
+      backgroundColor: "#ffffff"
+    });
+
+    document.body.removeChild(printEl);
+
+    // ✅ Xuất PDF
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    
+    let heightLeft = pdfHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
+    heightLeft -= pageHeight;
+
+    while (heightLeft > 0) {
+      position -= pageHeight;
+      pdf.addPage();
       pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pdf.internal.pageSize.getHeight();
-
-      while (heightLeft > 0) {
-        pdf.addPage();
-        position = heightLeft - pdfHeight;
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
-      }
-
-      pdf.save(`HoaDon_${data.maHoaDon}.pdf`);
-      showToast(" File đã được tải về thư mục Downloads!", "success");
-    } catch (err) {
-      console.error(err);
-      showToast(" Xuất PDF thất bại!", "error");
+      heightLeft -= pageHeight;
     }
-  };
+
+    pdf.save(`HoaDon_${data.maHoaDon}.pdf`);
+    showToast(" Xuất PDF thành công!", "success");
+    setTimeout(() => onClose(), 200);
+
+  } catch (err) {
+    console.error(err);
+    showToast(" Xuất PDF thất bại!", "error");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const getStatusChipColor = (status) => {
     switch (status) {
@@ -73,7 +138,6 @@ const InvoiceDetailsModal = ({ isOpen, onClose, data }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in">
-      {/* modal container */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-y-auto">
 
         {/* Header */}
@@ -100,13 +164,13 @@ const InvoiceDetailsModal = ({ isOpen, onClose, data }) => {
         {/* Footer */}
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t dark:border-gray-700 flex gap-3 justify-end">
           {data.trangThai === "Đã thanh toán" && (
-    <button
-      onClick={exportInvoicePDF}
-      className="px-5 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition"
-    >
-      Xuất PDF
-    </button>
-  )}
+            <button
+              onClick={exportInvoicePDF}
+              className="px-5 py-2 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 transition"
+            >
+              Xuất PDF
+            </button>
+          )}
           <button
             onClick={onClose}
             className="px-5 py-2 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 transition"
@@ -122,7 +186,6 @@ const InvoiceDetailsModal = ({ isOpen, onClose, data }) => {
 
 const InvoiceBody = ({ data, getStatusChipColor }) => (
   <>
-    {/* ===== TIÊU ĐỀ ===== */}
     <div className="flex items-center gap-2 mb-6">
       <FileText size={20} className="text-orange-500" />
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -130,7 +193,6 @@ const InvoiceBody = ({ data, getStatusChipColor }) => (
       </h2>
     </div>
 
-    {/* ===== THÔNG TIN HÓA ĐƠN ===== */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-6 text-sm">
       <InfoItem icon={<Tag size={16} />} label="Mã Phiếu Sửa" value={`#${data.maPhieu}`} />
       <InfoItem icon={<Calendar size={16} />} label="Ngày Lập Hóa Đơn" value={formatDateTime(data.ngayLapHoaDon)} />

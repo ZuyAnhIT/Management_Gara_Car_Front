@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
-import { formatDate } from "../../utils/helpers";
+import { formatDateTime } from "../../utils/helpers";
 
 const PrintableRepairTicket = React.forwardRef(({ data }, ref) => {
   if (!data) return null;
@@ -24,7 +24,7 @@ const PrintableRepairTicket = React.forwardRef(({ data }, ref) => {
 
         <div>
           <p className="text-sm font-semibold text-gray-600">Ngày lập phiếu:</p>
-          <p className="text-lg font-medium">{formatDate(data.ngayLap)}</p>
+          <p className="text-lg font-medium">{formatDateTime(data.ngayLap)}</p>
         </div>
 
         <div className="col-span-2">

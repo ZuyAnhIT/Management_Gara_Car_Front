@@ -9,7 +9,7 @@ import Box from "../components/common/Box";
 import BoxOnView from "../components/common/BoxOnView";
 import { Plus, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { formatDate } from "../utils/helpers";
+import { formatDateTime } from "../utils/helpers";
 import Loading from "../components/common/Loading";
 
 // ✅ Giao diện lựa chọn hành động — CHỈ CÒN “Chỉnh sửa thông tin”
@@ -265,7 +265,7 @@ const onEditAccount = async (form) => {
         </span>
       ),
     },
-    { key: "ngayTao", label: "Ngày tạo", render: (v) => formatDate(v) },
+    { key: "ngayTao", label: "Ngày tạo", render: (v) => formatDateTime(v) },
   ];
 
   const searchOptions = [

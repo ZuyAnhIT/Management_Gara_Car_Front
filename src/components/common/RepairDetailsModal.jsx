@@ -33,7 +33,7 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
 
       // ✅ Hiển thị thông báo
       showToast(
-        "✅ Phiếu đã được xuất & chuyển sang trạng thái Đang sửa!",
+        "Phiếu đã được xuất & chuyển sang trạng thái Đang sửa!",
         "success"
       );
 

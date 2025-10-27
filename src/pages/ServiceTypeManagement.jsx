@@ -8,7 +8,7 @@ import Box from "../components/common/Box";
 import BoxOnView from "../components/common/BoxOnView";
 import ConfirmModal from "../components/common/ConfirmModal";
 import { serviceTypeService } from "../services/serviceTypeService";
-import { formatDate } from "../utils/helpers";
+import { formatDateTime } from "../utils/helpers";
 import { Plus } from "lucide-react";
 import Loading from "../components/common/Loading";
 
@@ -258,7 +258,7 @@ const ServiceTypeManagement = () => {
         </span>
       ),
     },
-    { key: "ngayTao", label: "Ngày Tạo", render: (value) => formatDate(value) },
+    { key: "ngayTao", label: "Ngày Tạo", render: (value) => formatDateTime(value) },
   ];
 
   if (loading) return <Loading />;

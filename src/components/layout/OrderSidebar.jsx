@@ -19,7 +19,7 @@ import AutocompleteInput from "../common/AutocompleteInput";
 import { formatCurrency } from "../../utils/helpers";
 
 // ✅ PROPS MỚI: isOpen và onToggle để điều khiển từ bên ngoài
-function OrderSidebar({ isOpen, onToggle }) {
+function OrderSidebar({ isOpen, onToggle, onOrderCreated }) {
   const {
     cartItems,
     removeFromCart,
@@ -83,12 +83,16 @@ function OrderSidebar({ isOpen, onToggle }) {
     try {
       const response = await repairService.create(payload);
       showToast(response.message || "Tạo phiếu thành công!", "success");
+      window.dispatchEvent(new Event("reload-services"));
+
       clearCart();
       setSelectedMechanic(null);
       setSelectedVehicle(null);
       setRepairDescription("");
       setMechanicDisplay("");
       setVehicleDisplay("");
+      
+      if (onOrderCreated) onOrderCreated();
     } catch (err) {
       showToast(err.message || "Tạo phiếu thất bại.", "error");
     } finally {
@@ -113,7 +117,7 @@ function OrderSidebar({ isOpen, onToggle }) {
       >
         {/* Header với nút thu gọn */}
         <div className="flex items-center justify-between mb-4 flex-shrink-0">
-          <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+          <h5 className="text-xl font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
             <ClipboardList size={20} className="text-orange-500" />
             Tạo Phiếu Sửa Chữa
           </h5>
@@ -136,7 +140,7 @@ function OrderSidebar({ isOpen, onToggle }) {
         <div className="flex-1 overflow-y-auto space-y-4 pr-1 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
           {/* ✅ KHU VỰC THÔNG TIN THỢ */}
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700">
-            <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
+            <h6 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
               <User size={16} className="text-blue-500" /> Thông tin Thợ
             </h6>
             <AutocompleteInput
@@ -153,7 +157,7 @@ function OrderSidebar({ isOpen, onToggle }) {
 
           {/* ✅ KHU VỰC THÔNG TIN XE */}
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700">
-            <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
+            <h6 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
               <Car size={16} className="text-green-500" /> Thông tin Xe
             </h6>
             <AutocompleteInput
@@ -169,7 +173,7 @@ function OrderSidebar({ isOpen, onToggle }) {
 
           {/* ✅ KHU VỰC MÔ TẢ */}
           <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700">
-            <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
+            <h6 className="text-base font-semibold text-gray-700 dark:text-gray-200 mb-2 flex items-center gap-1.5">
               <MessageSquare size={16} className="text-purple-500" /> Mô tả
             </h6>
             <textarea
@@ -184,7 +188,7 @@ function OrderSidebar({ isOpen, onToggle }) {
 
           {/* DANH SÁCH DỊCH VỤ ĐÃ CHỌN */}
           <div>
-            <h6 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mt-5 mb-2">
+            <h6 className="text-base font-semibold text-gray-700 dark:text-gray-200 mt-5 mb-2">
               Dịch vụ đã chọn ({cartItems.length})
             </h6>
             {cartItems.length > 0 ? (
@@ -195,7 +199,7 @@ function OrderSidebar({ isOpen, onToggle }) {
                     className="bg-white dark:bg-gray-800 p-3 rounded-lg border dark:border-gray-700 shadow-sm"
                   >
                     <div className="flex justify-between items-start mb-1">
-                      <p className="font-medium text-gray-800 dark:text-gray-100 text-sm w-4/5">
+                      <p className="font-medium text-gray-800 dark:text-gray-100 text-base w-4/5">
                         {item.name}
                       </p>
                       <button
@@ -224,7 +228,7 @@ function OrderSidebar({ isOpen, onToggle }) {
                           <Plus size={14} />
                         </button>
                       </div>
-                      <p className="font-semibold text-gray-800 dark:text-gray-200 text-sm">
+                      <p className="font-semibold text-gray-800 dark:text-gray-200 text-base">
                         {formatCurrency(item.qty * item.price)}
                       </p>
                     </div>
@@ -233,7 +237,7 @@ function OrderSidebar({ isOpen, onToggle }) {
               </div>
             ) : (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-4">
-                <p className="text-sm">Chưa chọn dịch vụ nào</p>
+                <p className="text-base">Chưa chọn dịch vụ nào</p>
               </div>
             )}
           </div>

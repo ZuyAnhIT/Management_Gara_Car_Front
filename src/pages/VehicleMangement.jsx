@@ -53,7 +53,7 @@ const VehicleManagement = () => {
   // State để quản lý khách hàng được chọn từ Autocomplete
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   // ======= VALIDATE + LƯU DỮ LIỆU LỖI =======
-const [formErrors, setFormErrors] = useState({});
+const [ FormErrors,setFormErrors] = useState({});
 const [currentFormData, setCurrentFormData] = useState({});
   // Debounce search
   useEffect(() => {
