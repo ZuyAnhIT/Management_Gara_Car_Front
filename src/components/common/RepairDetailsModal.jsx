@@ -32,7 +32,10 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
       await repairService.updateStatus(data.maPhieu, "Đang sửa");
 
       // ✅ Hiển thị thông báo
-      showToast("✅ Phiếu đã được xuất & chuyển sang trạng thái Đang sửa!", "success");
+      showToast(
+        "Phiếu đã được xuất & chuyển sang trạng thái Đang sửa!",
+        "success"
+      );
 
       // ✅ Cập nhật UI tại parent component
       if (onStatusChange) {
@@ -42,7 +45,10 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
       onClose(); // đóng modal
     } catch (err) {
       console.error(err);
-      showToast("⚠️ Đã xuất phiếu nhưng cập nhật trạng thái thất bại!", "error");
+      showToast(
+        "⚠️ Đã xuất phiếu nhưng cập nhật trạng thái thất bại!",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
@@ -68,7 +74,6 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 animate-fade-in">
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
           <div className="flex items-center gap-3">
@@ -77,7 +82,10 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
               Chi tiết Phiếu Sửa Chữa #{data.maPhieu}
             </h3>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          >
             <X size={24} />
           </button>
         </div>
@@ -85,34 +93,65 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
         {/* Body */}
         <div className="p-6 overflow-y-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-6 text-sm">
-            <InfoItem icon={<Car size={16} />} label="Biển số xe" value={data.bienSo} />
-            <InfoItem icon={<Wrench size={16} />} label="Thợ phụ trách" value={data.tenTho} />
-            <InfoItem icon={<Calendar size={16} />} label="Ngày lập phiếu" value={formatDateTime(data.ngayLap)} />
+            <InfoItem
+              icon={<Car size={16} />}
+              label="Biển số xe"
+              value={data.bienSo}
+            />
+            <InfoItem
+              icon={<Wrench size={16} />}
+              label="Thợ phụ trách"
+              value={data.tenTho}
+            />
+            <InfoItem
+              icon={<Calendar size={16} />}
+              label="Ngày lập phiếu"
+              value={formatDateTime(data.ngayLap)}
+            />
             <InfoItem
               icon={<Tag size={16} />}
               label="Trạng thái"
               value={
-                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusChipColor(data.trangThai)}`}>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusChipColor(
+                    data.trangThai
+                  )}`}
+                >
                   {data.trangThai}
                 </span>
               }
             />
-            <InfoItem icon={<DollarSign size={16} />} label="Tổng tiền" value={formatCurrency(data.tongTien)} isBold />
+            <InfoItem
+              icon={<DollarSign size={16} />}
+              label="Tổng tiền"
+              value={formatCurrency(data.tongTien)}
+              isBold
+            />
           </div>
 
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-6 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border">
             <span className="font-semibold">Mô tả:</span> {data.moTa}
           </p>
 
-          <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-3">Các dịch vụ đã thực hiện:</h4>
+          <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-3">
+            Các dịch vụ đã thực hiện:
+          </h4>
           <div className="border rounded-lg overflow-hidden dark:border-gray-700">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                  <th className="p-3 text-left font-semibold text-gray-600 dark:text-gray-300">Tên Dịch Vụ</th>
-                  <th className="p-3 text-center font-semibold text-gray-600 dark:text-gray-300">Số Lượng</th>
-                  <th className="p-3 text-right font-semibold text-gray-600 dark:text-gray-300">Đơn Giá</th>
-                  <th className="p-3 text-right font-semibold text-gray-600 dark:text-gray-300">Thành Tiền</th>
+                  <th className="p-3 text-left font-semibold text-gray-600 dark:text-gray-300">
+                    Tên Dịch Vụ
+                  </th>
+                  <th className="p-3 text-center font-semibold text-gray-600 dark:text-gray-300">
+                    Số Lượng
+                  </th>
+                  <th className="p-3 text-right font-semibold text-gray-600 dark:text-gray-300">
+                    Đơn Giá
+                  </th>
+                  <th className="p-3 text-right font-semibold text-gray-600 dark:text-gray-300">
+                    Thành Tiền
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y dark:divide-gray-700">
@@ -120,8 +159,12 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
                   <tr key={index} className="dark:text-gray-300">
                     <td className="p-3">{item.tenDichVu}</td>
                     <td className="p-3 text-center">{item.soLuong}</td>
-                    <td className="p-3 text-right">{formatCurrency(item.donGia)}</td>
-                    <td className="p-3 text-right font-semibold">{formatCurrency(item.thanhTien)}</td>
+                    <td className="p-3 text-right">
+                      {formatCurrency(item.donGia)}
+                    </td>
+                    <td className="p-3 text-right font-semibold">
+                      {formatCurrency(item.thanhTien)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -131,7 +174,6 @@ const RepairDetailsModal = ({ isOpen, onClose, data, onStatusChange }) => {
 
         {/* Footer */}
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t flex gap-3 justify-end">
-
           {/* ✅ Điều kiện chỉ cho phép xuất khi còn Chờ xử lý */}
           {data.trangThai === "Chờ xử lý" && (
             <button
@@ -159,7 +201,11 @@ const InfoItem = ({ icon, label, value, isBold }) => (
     <span className="text-gray-500 dark:text-gray-400 mt-0.5">{icon}</span>
     <div>
       <p className="text-gray-500 dark:text-gray-400 font-medium">{label}</p>
-      <p className={`text-gray-800 dark:text-gray-100 ${isBold ? "font-bold text-base" : "font-medium"}`}>
+      <p
+        className={`text-gray-800 dark:text-gray-100 ${
+          isBold ? "font-bold text-base" : "font-medium"
+        }`}
+      >
         {value}
       </p>
     </div>
