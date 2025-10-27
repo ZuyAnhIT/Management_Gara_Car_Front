@@ -22,12 +22,11 @@ const getStatusColor = (status) => {
   }
 };
 
-
 const MachineManagement = () => {
   const { showToast } = useToast();
   const [machine, setMachine] = useState([]);
   const [loading, setLoading] = useState(true);
-  const[overview,setOverview] = useState(null);
+  const [overview, setOverview] = useState(null);
   const [searchField, setSearchField] = useState("tenTho");
   const [searchTerm, setSearchTerm] = useState("");
   const [pagination, setPagination] = useState({
@@ -102,7 +101,7 @@ const MachineManagement = () => {
     searchField,
     showToast,
   ]);
-// ======== GỌI API: TỔNG QUAN ========
+  // ======== GỌI API: TỔNG QUAN ========
   const fetchOverview = useCallback(async () => {
     try {
       const res = await machineService.getthongkeTho();
@@ -148,7 +147,6 @@ const MachineManagement = () => {
   };
 
   const confirmDelete = async () => {
-    
     if (!itemToDelete) return;
     try {
       await machineService.delete(itemToDelete.maTho);
@@ -174,131 +172,127 @@ const MachineManagement = () => {
     return phone;
   };
 
-const [formErrors, setFormErrors] = useState({}); 
-const [currentFormData, setCurrentFormData] = useState({});
- const handleSave = async (formData) => {
-  const errors = {}; // ✅ Bổ sung khai báo lỗi
+  const [formErrors, setFormErrors] = useState({});
+  const [currentFormData, setCurrentFormData] = useState({});
+  const handleSave = async (formData) => {
+    const errors = {}; // ✅ Bổ sung khai báo lỗi
 
-  // 🚧 Kiểm tra trống
-  if (!formData.tenTho?.trim()) {
-    errors.tenTho = "Vui lòng nhập tên thợ.";
-  }
-  if (!formData.chuyenMon?.trim()) {
-    errors.chuyenMon = "Vui lòng nhập chuyên môn.";
-  }
-  if (!formData.soDienThoai?.trim()) {
-    errors.soDienThoai = "Vui lòng nhập số điện thoại.";
-  }
+    // 🚧 Kiểm tra trống
+    if (!formData.tenTho?.trim()) {
+      errors.tenTho = "Vui lòng nhập tên thợ.";
+    }
+    if (!formData.chuyenMon?.trim()) {
+      errors.chuyenMon = "Vui lòng nhập chuyên môn.";
+    }
+    if (!formData.soDienThoai?.trim()) {
+      errors.soDienThoai = "Vui lòng nhập số điện thoại.";
+    }
 
-  // 🚧 Kiểm tra định dạng số điện thoại VN
-  const phonePattern = /^(\+84|84|0)\s?(3|5|7|8|9)\d{1,2}\s?\d{3}\s?\d{3}$/;
+    // 🚧 Kiểm tra định dạng số điện thoại VN
+    const phonePattern = /^(\+84|84|0)\s?(3|5|7|8|9)\d{1,2}\s?\d{3}\s?\d{3}$/;
 
-  console.log("===== VALID NUMBERS =====");
-  const validPhoneNumbers = [
-  "0901234567",          // Không khoảng trắng
-  "090 123 4567",        // Có khoảng trắng
-  
-  "+84901234567",        // Có tiền tố +84
-  "+84 901 234 567",     // Có tiền tố +84 và khoảng trắng
-  "84 901234567",        // Có tiền tố 84
-  "84 901 234 567",      // Có tiền tố 84 và khoảng trắng
-  "0389876543",          // Đầu số 03
-  "03 898 76543",        // Có khoảng trắng
-  "+84389876543",        // Đầu số 03 với +84
-  ];
+    console.log("===== VALID NUMBERS =====");
+    const validPhoneNumbers = [
+      "0901234567", // Không khoảng trắng
+      "090 123 4567", // Có khoảng trắng
 
-  const invalidPhoneNumbers = [
-    "090123456",           // Thiếu số (9 chữ số)
-    "09012345678",         // Thừa số (11 chữ số)
-    "0901 234 567",        // Đầu số 0901 (cho phép), nhưng không sử dunbjg
-    "09991234",            // Thiếu số
-    "abcdefghij",          // Không phải số
-    "1234567890",          // Không bắt đầu bằng 0, +84, 84
-    "+8499123456",         // Thiếu số sau chuẩn hóa
-    "090 12 34567",        // Sai nhóm số (không chuẩn)
-    "+84 901 234 56",      // Thiếu số (9 chữ số sau chuẩn hóa)
-  ];
-  // const testNumbers = (list, expected) => {
-  //   list.forEach(num => {
-  //     console.log(`${num} => ${phonePattern.test(num) === expected ? "✅ PASS" : "❌ FAIL"}`);
-  //   });
-  // };
-  // console.log("===== VALID NUMBERS =====");
-  // testNumbers(validPhoneNumbers, true);
+      "+84901234567", // Có tiền tố +84
+      "+84 901 234 567", // Có tiền tố +84 và khoảng trắng
+      "84 901234567", // Có tiền tố 84
+      "84 901 234 567", // Có tiền tố 84 và khoảng trắng
+      "0389876543", // Đầu số 03
+      "03 898 76543", // Có khoảng trắng
+      "+84389876543", // Đầu số 03 với +84
+    ];
 
-  // console.log("\n===== INVALID NUMBERS =====");
-  // testNumbers(invalidPhoneNumbers, false);
+    const invalidPhoneNumbers = [
+      "090123456", // Thiếu số (9 chữ số)
+      "09012345678", // Thừa số (11 chữ số)
+      "0901 234 567", // Đầu số 0901 (cho phép), nhưng không sử dunbjg
+      "09991234", // Thiếu số
+      "abcdefghij", // Không phải số
+      "1234567890", // Không bắt đầu bằng 0, +84, 84
+      "+8499123456", // Thiếu số sau chuẩn hóa
+      "090 12 34567", // Sai nhóm số (không chuẩn)
+      "+84 901 234 56", // Thiếu số (9 chữ số sau chuẩn hóa)
+    ];
+    // const testNumbers = (list, expected) => {
+    //   list.forEach(num => {
+    //     console.log(`${num} => ${phonePattern.test(num) === expected ? "✅ PASS" : "❌ FAIL"}`);
+    //   });
+    // };
+    // console.log("===== VALID NUMBERS =====");
+    // testNumbers(validPhoneNumbers, true);
 
-  if (
-    formData.soDienThoai &&
-    !phonePattern.test(formData.soDienThoai)
-  ) {
-    errors.soDienThoai =
-      "Số điện thoại không hợp lệ (VD: 0901234567, +84901234567).";
-  }
+    // console.log("\n===== INVALID NUMBERS =====");
+    // testNumbers(invalidPhoneNumbers, false);
 
-  // 🚧 Kiểm tra email
-  if (!formData.email?.trim()) {
-    errors.email = "Email không được để trống.";
-  } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-    errors.email = "Email không hợp lệ.";
-  }
+    if (formData.soDienThoai && !phonePattern.test(formData.soDienThoai)) {
+      errors.soDienThoai =
+        "Số điện thoại không hợp lệ (VD: 0901234567, +84901234567).";
+    }
 
-  // 🚧 Kiểm tra kinh nghiệm
+    // 🚧 Kiểm tra email
+    if (!formData.email?.trim()) {
+      errors.email = "Email không được để trống.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = "Email không hợp lệ.";
+    }
+
+    // 🚧 Kiểm tra kinh nghiệm
     if (formData.kinhNghiem?.toString().trim()) {
-    const kinhNghiemValue = Number(formData.kinhNghiem);
-    if (isNaN(kinhNghiemValue)) {
-      errors.kinhNghiem = "Kinh nghiệm phải là số.";
-    } else if (kinhNghiemValue < 0) {
-      errors.kinhNghiem = "Kinh nghiệm không được âm.";
-    } else if (kinhNghiemValue > 50) {
-      errors.kinhNghiem = "Kinh nghiệm không được vượt quá 50 năm.";
-    }
-  } else {
-    // 🚀 Nếu bỏ trống hoặc null → gán mặc định = 0
-    formData.kinhNghiem = 0;
-  }
-
-  // 🚨 Nếu có lỗi → hiển thị, focus vào ô đầu tiên
-  if (Object.keys(errors).length > 0) {
-    setFormErrors(errors);
-    setCurrentFormData(formData);
-    showToast(Object.values(errors)[0], "error");
-
-    const firstErrorField = Object.keys(errors)[0];
-    setTimeout(() => {
-      const input =
-        document.getElementById(firstErrorField) ||
-        document.querySelector(`[name="${firstErrorField}"]`);
-      if (input) {
-        input.focus();
-        input.scrollIntoView({ behavior: "smooth", block: "center" });
+      const kinhNghiemValue = Number(formData.kinhNghiem);
+      if (isNaN(kinhNghiemValue)) {
+        errors.kinhNghiem = "Kinh nghiệm phải là số.";
+      } else if (kinhNghiemValue < 0) {
+        errors.kinhNghiem = "Kinh nghiệm không được âm.";
+      } else if (kinhNghiemValue > 50) {
+        errors.kinhNghiem = "Kinh nghiệm không được vượt quá 50 năm.";
       }
-    }, 100);
-    return;
-  }
-
-  // ✅ Nếu không có lỗi → reset lỗi, tiến hành submit
-  setFormErrors({});
-  try {
-    if (modalMode === "create") {
-      await machineService.create(formData);
-      showToast("Thêm mới thợ thành công!", "success");
     } else {
-      await machineService.update(editingData.maTho, formData);
-      showToast("Cập nhật thợ thành công!", "success");
+      // 🚀 Nếu bỏ trống hoặc null → gán mặc định = 0
+      formData.kinhNghiem = 0;
     }
 
-    setIsModalOpen(false);
-    setCurrentFormData({});
-    fetchData();
-  } catch (err) {
-    showToast(err.message, "error");
-  }
-};
+    // 🚨 Nếu có lỗi → hiển thị, focus vào ô đầu tiên
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      setCurrentFormData(formData);
+      showToast(Object.values(errors)[0], "error");
 
+      const firstErrorField = Object.keys(errors)[0];
+      setTimeout(() => {
+        const input =
+          document.getElementById(firstErrorField) ||
+          document.querySelector(`[name="${firstErrorField}"]`);
+        if (input) {
+          input.focus();
+          input.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
+      return;
+    }
 
- const overviewFields = overview
+    // ✅ Nếu không có lỗi → reset lỗi, tiến hành submit
+    setFormErrors({});
+    try {
+      if (modalMode === "create") {
+        await machineService.create(formData);
+        showToast("Thêm mới thợ thành công!", "success");
+      } else {
+        await machineService.update(editingData.maTho, formData);
+        showToast("Cập nhật thợ thành công!", "success");
+      }
+
+      setIsModalOpen(false);
+      setCurrentFormData({});
+      fetchData();
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  };
+
+  const overviewFields = overview
     ? [
         {
           label: "Tổng số Thợ",
@@ -307,7 +301,6 @@ const [currentFormData, setCurrentFormData] = useState({});
           color: "text-orange-500",
           bg: "bg-gradient-to-r from-orange-100 via-orange-200 to-orange-300 dark:from-orange-900/40 dark:via-orange-800/40 dark:to-orange-700/40",
           border: "border-l-4 border-orange-400",
-          
         },
         {
           label: "Số thợ kinh nghiệm cao",
@@ -316,7 +309,6 @@ const [currentFormData, setCurrentFormData] = useState({});
           color: "text-sky-500",
           bg: "bg-gradient-to-r from-sky-100 via-sky-200 to-sky-300 dark:from-sky-900/40 dark:via-sky-800/40 dark:to-sky-700/40",
           border: "border-l-4 border-sky-400",
-          
         },
         {
           label: "Số thợ kinh nghiệm thấp",
@@ -325,9 +317,7 @@ const [currentFormData, setCurrentFormData] = useState({});
           color: "text-emerald-500",
           bg: "bg-gradient-to-r from-emerald-100 via-emerald-200 to-emerald-300 dark:from-emerald-900/40 dark:via-emerald-800/40 dark:to-emerald-700/40",
           border: "border-l-4 border-emerald-400",
-          
         },
-        
       ]
     : [];
   const machineFormFields = [
@@ -345,11 +335,17 @@ const [currentFormData, setCurrentFormData] = useState({});
       required: true,
       defaultValue: "",
     },
-    { name: "soDienThoai", label: "Số Điện Thoại", type: "text",require: true , defaultValue: "" },
+    {
+      name: "soDienThoai",
+      label: "Số Điện Thoại",
+      type: "text",
+      require: true,
+      defaultValue: "",
+    },
     { name: "email", label: "Email", type: "email", defaultValue: "" },
     {
       name: "kinhNghiem",
-      label: "Kinh Nghiệm",
+      label: "Kinh Nghiệm (Năm)",
       type: "text",
       defaultValue: "",
     },
@@ -377,7 +373,6 @@ const [currentFormData, setCurrentFormData] = useState({});
     { value: "soDienThoai", label: "Tìm theo Số Điện Thoại" },
     { value: "kinhNghiem", label: "Tìm theo Kinh nghiệm" },
     { value: "trangThai", label: "Tìm theo Trạng thái" },
-    
   ];
   const columns = [
     { key: "maTho", label: "Mã Thợ" },
@@ -398,7 +393,7 @@ const [currentFormData, setCurrentFormData] = useState({});
         </span>
       ),
     },
-    { key: "kinhNghiem", label: "Kinh Nghiệm " },
+    { key: "kinhNghiem", label: "Kinh Nghiệm (Năm) " },
     { key: "ngayVaoLam", label: "Ngày Vào Làm " },
   ];
 
@@ -406,20 +401,21 @@ const [currentFormData, setCurrentFormData] = useState({});
   return (
     <div className="space-y-6 transition-colors duration-300">
       <BoxOnView title="Tổng quan Thợ" fields={overviewFields} />
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-4 flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-center
- transition-colors duration-300">
-  <div className="w-full sm:w-auto flex-1 min-w-[250px]">
-   <SearchWithOptions
-          searchField={searchField}
-          searchTerm={searchTerm}
-          onSearchFieldChange={setSearchField}
-          onSearchTermChange={setSearchTerm}
-          options={searchOptions}
-          placeholder="Nhập giá trị cần tìm..."
-        />
-</div>
+      <div
+        className="bg-white dark:bg-gray-900 rounded-xl shadow-md p-4 flex flex-col sm:flex-row flex-wrap gap-4 justify-between items-center
+ transition-colors duration-300"
+      >
+        <div className="w-full sm:w-auto flex-1 min-w-[250px]">
+          <SearchWithOptions
+            searchField={searchField}
+            searchTerm={searchTerm}
+            onSearchFieldChange={setSearchField}
+            onSearchTermChange={setSearchTerm}
+            options={searchOptions}
+            placeholder="Nhập giá trị cần tìm..."
+          />
+        </div>
 
- 
         <SortControls
           sortConfig={sortConfig}
           onSortChange={setSortConfig}
@@ -436,7 +432,6 @@ const [currentFormData, setCurrentFormData] = useState({});
       </div>
 
       <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-md transition-colors duration-300">
-
         <Table
           columns={columns}
           data={machine}
@@ -455,25 +450,24 @@ const [currentFormData, setCurrentFormData] = useState({});
       />
 
       {isModalOpen && (
-  <Box
-    title={
-      modalMode === "create"
-        ? "Thêm mới Thợ"
-        : "Cập nhật Thợ"
-    }
-    fields={
-      modalMode === "create" ? machineFormFields : editMachineFormFields
-    }
-    initialData={Object.keys(currentFormData).length > 0 ? currentFormData : editingData}
-    onClose={() => {
-      setIsModalOpen(false);
-      setCurrentFormData({}); // reset khi đóng form
-    }}
-    onSubmit={handleSave}
-    mode={modalMode}
-  />
-)}
-
+        <Box
+          title={modalMode === "create" ? "Thêm mới Thợ" : "Cập nhật Thợ"}
+          fields={
+            modalMode === "create" ? machineFormFields : editMachineFormFields
+          }
+          initialData={
+            Object.keys(currentFormData).length > 0
+              ? currentFormData
+              : editingData
+          }
+          onClose={() => {
+            setIsModalOpen(false);
+            setCurrentFormData({}); // reset khi đóng form
+          }}
+          onSubmit={handleSave}
+          mode={modalMode}
+        />
+      )}
 
       <ConfirmModal
         isOpen={isConfirmModalOpen}
@@ -483,10 +477,7 @@ const [currentFormData, setCurrentFormData] = useState({});
       >
         <p>
           Bạn có chắc chắn muốn xóa thợ{" "}
-          <strong className="text-red-600">
-            "{itemToDelete?.tenTho}"
-          </strong>
-          ?
+          <strong className="text-red-600">"{itemToDelete?.tenTho}"</strong>?
         </p>
       </ConfirmModal>
     </div>
