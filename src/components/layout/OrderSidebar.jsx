@@ -142,7 +142,7 @@ function OrderSidebar({ isOpen, onToggle }) {
               <User size={16} className="text-blue-500" /> Thông tin Thợ
             </h6>
             <AutocompleteInput
-              placeholder="Tìm thợ theo tên hoặc SĐT..."
+              placeholder="Tìm thợ theo tên ..."
               fetchSuggestions={machineService.search}
               searchParamKey={"tenTho"}
               secondarySearchParamKey={"soDienThoai"}
